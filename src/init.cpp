@@ -1073,7 +1073,11 @@ bool AppInit2(boost::thread_group& threadGroup)
             nWalletDBUpdated++;
         }
     } // (!fDisableWallet)
+//51
+    // ********************************************************* Step 8.5: set block broadcasting
+	doNotBroadcastBlocks = GetBoolArg("-dontbroadcastblocks", false);
 
+    
     // ********************************************************* Step 9: import blocks
 
     // scan for better chains in the block chain database, that are not yet connected in the active best chain
