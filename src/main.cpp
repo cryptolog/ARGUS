@@ -3235,8 +3235,14 @@ void static ProcessGetData(CNode* pfrom)
             Inventory(inv.hash);
 
             if (inv.type == MSG_BLOCK || inv.type == MSG_FILTERED_BLOCK)
+         {
+			// 51 darosior
+			if (!doNotBroadcastBlocks) {       
+                
                 break;
         }
+       }
+      }      
     }
 
     pfrom->vRecvGetData.erase(pfrom->vRecvGetData.begin(), it);
@@ -3508,6 +3514,8 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
 
     else if (strCommand == "getdata")
     {
+			// 51 darosior
+			if (!doNotBroadcastBlocks) {
         vector<CInv> vInv;
         vRecv >> vInv;
         if (vInv.size() > MAX_INV_SZ)
@@ -3525,10 +3533,12 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         pfrom->vRecvGetData.insert(pfrom->vRecvGetData.end(), vInv.begin(), vInv.end());
         ProcessGetData(pfrom);
     }
-
+   }
 
     else if (strCommand == "getblocks")
     {
+			// 51 darosior
+			if (!doNotBroadcastBlocks) {
         CBlockLocator locator;
         uint256 hashStop;
         vRecv >> locator >> hashStop;
@@ -3559,10 +3569,12 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
             }
         }
     }
-
+  }
 
     else if (strCommand == "getheaders")
     {
+			// 51 darosior
+			if (!doNotBroadcastBlocks) { 
         CBlockLocator locator;
         uint256 hashStop;
         vRecv >> locator >> hashStop;
@@ -3596,7 +3608,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         }
         pfrom->PushMessage("headers", vHeaders);
     }
-
+   }
 
     else if (strCommand == "tx")
     {
@@ -3684,6 +3696,8 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
 
     else if (strCommand == "block" && !fImporting && !fReindex) // Ignore blocks received while importing
     {
+        // 51 darosior
+        if (!doNotBroadcastBlocks) {
         CBlock block;
         vRecv >> block;
 
@@ -3701,7 +3715,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
             if (nDoS > 0)
                 pfrom->Misbehaving(nDoS);
     }
-
+  }
 
     else if (strCommand == "getaddr")
     {
@@ -4618,8 +4632,13 @@ void static ARGUSCOINMiner(CWallet *pwallet)
     unsigned int nExtraNonce = 0;
 
     try { loop {
-        while (vNodes.empty())
-            MilliSleep(1000);
+        while 
+            // 51 darosior
+                // Busy-wait for the network to come online so we don't waste time mining	          
+            // Disabled the wait for peers before mining because we want to mine on an older chain.
+            
+            //(vNodes.empty())
+           // MilliSleep(1000);
 
         //
         // Create new block
