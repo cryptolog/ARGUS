@@ -4631,8 +4631,9 @@ void static ARGUSCOINMiner(CWallet *pwallet)
     CReserveKey reservekey(pwallet);
     unsigned int nExtraNonce = 0;
 
-    try { loop {
-        while 
+            try {
+        while (true) {
+
             // 51 darosior
                 // Busy-wait for the network to come online so we don't waste time mining	          
             // Disabled the wait for peers before mining because we want to mine on an older chain.
